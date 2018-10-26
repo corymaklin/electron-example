@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+const { ipcRenderer } = window.require('electron');
 
 class App extends Component {
+  constructor(props) {
+      super(props);
+      this.state = {
+        arg: ''
+      };
+      this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+      ipcRenderer.on('example', (event, arg) => {
+        this.setState({
+          arg: arg
+        });
+      })
+  }
+
+  handleClick() {
+      ipcRenderer.send('example', 'Hello World');
+  }
+
   render() {
+    const { arg } = this.state;
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <h1>{ arg }</h1>
+        <button onClick={ this.handleClick }>Click</button>
       </div>
     );
   }
